@@ -1,37 +1,94 @@
-import time
-import re
+# Creating a simple python based plaintext encryption/decryption program based on the Caesar Cipher. I am practicing importing libraries such as tkinter and creating a simple GUI for the user.
 
-menu = ["Black Coffee", "Espresso", "Latte", "Cappuccino", "Frappuccino"]
+# Importing tkinter library
+import tkinter as ttk
 
-print("Hello, Welcome to Python Barista.\nWhat can I get started for you?\nHere is our menu for today:\n" + "\n".join(menu))  # Join menu items with newline
+# Function to encrypt 
+def encrypt():
+  # Get the input (cleartext) from the entry widget
+  cleartext = cleartext_entry.get()
 
-time.sleep(5)
+  shift = 3  # Shifts the alphabet 3 characters to the right. (You can adjust this value)
 
-print("What would you like to order?")
-order_input = input().title()
+  # Creating an string to store the encrypted text
+  encrypted_text = ""
 
-# Check if any menu item is a substring of the order input
-matched_items = [item for item in menu if item.lower() in order_input.lower()]
+  # Putting each character in the plaintext through the shift.
+  for char in cleartext:
+      # Check if the character is an uppercase letter
+      if char.isupper():
+          # Encrypt uppercase letters
+          encrypted_char = chr((ord(char) - 65 + shift) % 26 + 65)
+      # Check if the character is a lowercase letter
+      elif char.islower():
+          # Encrypt lowercase letters
+          encrypted_char = chr((ord(char) - 97 + shift) % 26 + 97)
+      else:
+          # If the character is not a letter, keep it unchanged
+          encrypted_char = char
+      # Append the encrypted character to the encrypted text
+      encrypted_text += encrypted_char
 
-if matched_items:
-    order = matched_items[0]  # Take the first matched item
-    print("Great! " + order + " is a great choice.\nJust one for today?")
-    answer = input().lower()
-    if answer.startswith("yes"):
-        print("Great!\nCan I please have a name for the order?")
-        name = input()
-        print("Thank you, " + name + ", I'll get started on that order for you.")
-        time.sleep(5)
-        print("Here is your " + order + ". Enjoy!")
-    elif answer.startswith("no"):
-        # Check for quantity in the response
-        quantity_match = re.search(r'\d+', answer)
-        if quantity_match:
-            qty = quantity_match.group()
-            print("Got it! I'll prepare " + qty + " " + order + "(s) for you.")
-            time.sleep(5)
-            print("Here are your " + qty + " " + order + "(s). Enjoy!")
-        else:
-            print("I'm sorry, I didn't understand your response.")
-else:
-    print("I'm sorry, that item is not on our menu.")
+  # Display the encrypted text in the output widget
+  output_entry.delete(0, "end")  # Clear any previous text
+  output_entry.insert(0, encrypted_text)
+
+# Function to decrypt 
+def decrypt():
+  # Get the encrypted text from the entry widget
+  encryptedtext = encryptedtext_entry.get()
+
+  shift = 3  # Shifts the alphabet 3 characters to the left. (Same shift as encryption)
+
+  # Initialize an empty string to store the decrypted text
+  decrypted_text = ""
+
+  # Iterate through each character in the encrypted text
+  for char in encryptedtext:
+      # Check if the character is an uppercase letter
+      if char.isupper():
+          decrypted_char = chr(((ord(char) - 65 - shift) % 26) + 65)
+      # Check if the character is a lowercase letter
+      elif char.islower():
+          decrypted_char = chr(((ord(char) - 97 - shift) % 26) + 97)
+      else:
+          # If the character is not a letter, keep it unchanged
+          decrypted_char = char
+      # Append the decrypted character to the decrypted text
+      decrypted_text += decrypted_char
+
+  # Display the decrypted text in the output widget
+  output_entry.delete(0, "end")  # Clear any previous text
+  output_entry.insert(0, decrypted_text)
+
+# Creating the application window
+root = ttk.Tk()
+root.title("Simple Plaintext Encryption and Decryption Program by xobash")
+
+# Creating labels and buttons
+cleartext_label = ttk.Label(root, text="Cleartext:")
+cleartext_label.grid(row=0, column=0, padx=5, pady=5)
+
+cleartext_entry = ttk.Entry(root)
+cleartext_entry.grid(row=0, column=1, padx=5, pady=5)
+
+encrypt_button = ttk.Button(root, text="Encrypt", command=encrypt)
+encrypt_button.grid(row=0, column=2, padx=5, pady=5)
+
+encryptedtext_label = ttk.Label(root, text="Encrypted text:")
+encryptedtext_label.grid(row=1, column=0, padx=5, pady=5)
+
+encryptedtext_entry = ttk.Entry(root)
+encryptedtext_entry.grid(row=1, column=1, padx=5, pady=5)
+
+decrypt_button = ttk.Button(root, text="Decrypt", command=decrypt)
+decrypt_button.grid(row=1, column=2, padx=5, pady=5)
+
+output_label = ttk.Label(root, text="Output:")
+output_label.grid(row=2, column=0, padx=5, pady=5)
+
+output_entry = ttk.Entry(root)
+output_entry.grid(row=2, column=1, padx=5, pady=5)
+
+# Start the GUI event loop
+root.mainloop()
